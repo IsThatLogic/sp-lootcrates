@@ -4,7 +4,7 @@
 #define DEBUG
 
 #define PLUGIN_AUTHOR "log-ical"
-#define PLUGIN_VERSION "2.00"
+#define PLUGIN_VERSION "2.05"
 
 #include <colors>
 #include <sdktools>
@@ -26,6 +26,8 @@ int tier_price[TIER_SIZE] =  { 1000, 2500, 3000, 4000, 5000 };
 
 bool g_aBought[MAXPLAYERS+1] = false; //boolean array to prevent players from buying crate >1 per round
 
+bool g_bTimer = true;
+
 MenuHandler buy_callbacks[TIER_SIZE];
 
 typedef TIER_CALLBACK_FUNC = function Action (int client);
@@ -43,26 +45,23 @@ public void OnPluginStart()
 	HookEvent("round_start", Event_RoundStart, EventHookMode_Pre);
 }
 
-bool TimeCheck() //prevents crate buying after certain time
+
+public Action TimeCheck(Handle timer) //prevents crate buying after certain time
 {
-	int timeleft;
-	timeleft = GetMapTimeLeft(timeleft);
-	if(timeleft<375) //6min15sec, 45sec past round start
-	{
-		return false;
-	}
-	else
-	{
-		return true;
-	}
+	g_bTimer = false;
+	CloseHandle(timer);
 }
 
 
 public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 {
-	int size = sizeof(g_aBought); //This may *possibly* break something, dont think it will though. 
-	g_aBought[size] = false;
+	for(int i=0;i<MAXPLAYERS;i++)
+	{
+		g_aBought[i] = false;
+	}
 	//resets bool array at start of round
+	g_bTimer = true;
+	CreateTimer(45.0, TimeCheck); //45 seconds after round, client cant buy crate
 	return Plugin_Handled;
 }
 
@@ -89,7 +88,7 @@ public Action menu1(int client, int args)
 				CPrintToChat(client, "{green}[SM] {lightgreen}You can only purchace one crate per round.");
 				return Plugin_Handled;
 			}
-			if (!TimeCheck())
+			if (!g_bTimer)
 			{
 				CPrintToChat(client, "{green}[SM] {lightgreen}You can not purchase 30 seconds after round start.");
 				return Plugin_Handled;
