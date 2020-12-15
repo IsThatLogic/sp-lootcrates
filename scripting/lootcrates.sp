@@ -7,7 +7,6 @@
 #define PLUGIN_VERSION "1.25"
 
 #include <colors>
-#include <logging>
 #include <sdktools>
 #include <store>
 #include <sourcemod>
