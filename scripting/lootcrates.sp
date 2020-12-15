@@ -4,9 +4,10 @@
 #define DEBUG
 
 #define PLUGIN_AUTHOR "log-ical"
-#define PLUGIN_VERSION "1.00"
+#define PLUGIN_VERSION "1.25"
 
 #include <colors>
+#include <logging>
 #include <sdktools>
 #include <store>
 #include <sourcemod>
@@ -50,6 +51,7 @@ stock IsMember(int client)
 	return false;
 }
 
+
 public Action menu1(int client, int args)
 {
 	if (IsPlayerAlive(client))
@@ -78,13 +80,13 @@ public Action menu1(int client, int args)
 		}
 		else
 		{
-			CPrintToChat(client, "[SM] You need to be on the Terrorist team to use this command");
+			CPrintToChat(client, "{green}[SM] {lightgreen}You need to be on the Terrorist team to use this command");
 			return Plugin_Handled;
 		}
 	}
 	else
 	{
-		CPrintToChat(client, "[SM] You need to be alive to use this command");
+		CPrintToChat(client, "{green}[SM] {lightgreen}You need to be alive to use this command");
 		return Plugin_Handled;
 	}
 }
@@ -98,7 +100,7 @@ new const String:reward[TIER_SIZE][LIST_SIZE][] =
     {"HE","Smoke","Flash","Flash 2x","Body Armor","USP"},
     {"USP","Dual Elites","Flash 2x + HE","Full Nades","Armor + Helm","Armor + HE"},
     {"Armor + Helm","Deagle","HE + Smoke","Full Nades","Five Seven","Armor + USP"},
-    {"Armor + Deagle","Armor+Helm+Full Nades","Deagle","Mac-10","Armor+Helm+p228"," "},
+    {"Armor + Deagle","Armor+Helm+Full Nades","Deagle","Mac-10","Armor+Helm+p228","Armor + p228"},
     {"Armor+Helm+Mac-10","Armor+Mac-10","Armor+Deagle+Full Nades","Armor+Helm+Deagle","Scout","Mac-10"}
 
 };
@@ -197,7 +199,7 @@ public int tier1buycallback(Menu menu, MenuAction action, int param1, int param2
 			{
 				if (!IsPlayerAlive(param1) || GetClientTeam(param1) != 2) //should prevent people from obtaining items and losing credits when they arent supposed to.
 				{
-					CPrintToChat(param1, "[SM] You need to be alive and on T to use this command");
+					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
 				//deducts credits for tier
@@ -279,7 +281,7 @@ public int tier2buycallback(Menu menu, MenuAction action, int param1, int param2
 			{
 				if (!IsPlayerAlive(param1) || GetClientTeam(param1) != 2)
 				{
-					CPrintToChat(param1, "[SM] You need to be alive and on T to use this command");
+					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
 				int oldcredits = Store_GetClientCredits(param1);
@@ -365,7 +367,7 @@ public int tier3buycallback(Menu menu, MenuAction action, int param1, int param2
 			{
 				if (!IsPlayerAlive(param1) || GetClientTeam(param1) != 2)
 				{
-					CPrintToChat(param1, "[SM] You need to be alive and on T to use this command");
+					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
 				int oldcredits = Store_GetClientCredits(param1);
@@ -452,14 +454,14 @@ public int tier4buycallback(Menu menu, MenuAction action, int param1, int param2
 			{
 				if (!IsPlayerAlive(param1) || GetClientTeam(param1) != 2)
 				{
-					CPrintToChat(param1, "[SM] You need to be alive and on T to use this command");
+					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
 				int oldcredits = Store_GetClientCredits(param1);
 				int newcredits = oldcredits - 4000;
 				Store_SetClientCredits(param1, newcredits);
 				
-				int RandomInt = GetRandomInt(1, 5);
+				int RandomInt = GetRandomInt(1, 6);
    				switch(RandomInt)
    				{
    					case 1:
@@ -484,8 +486,7 @@ public int tier4buycallback(Menu menu, MenuAction action, int param1, int param2
    					{
 						GivePlayerItem(param1, "weapon_deagle");
 						GivePlayerAmmo(param1, 35, 8);
-						GivePlayerItem(param1, "item_kevlar");
-						CPrintToChat(param1, "{green}[SM]{lightgreen} You found {default}Body Armor + Deagle{lightgreen}.");
+						CPrintToChat(param1, "{green}[SM]{lightgreen} You found a{default}Deagle{lightgreen}.");
    						return 0;
    					}
    					case 4:
@@ -503,6 +504,13 @@ public int tier4buycallback(Menu menu, MenuAction action, int param1, int param2
 						GivePlayerAmmo(param1, 100, 9);
    						return 0;
    					}
+					case 6:
+					{
+						GivePlayerItem(param1, "weapon_p228");
+						GivePlayerAmmo(param1, 100, 9);
+						GivePlayerItem(param1, "item_kevlar");
+						CPrintToChat(param1, "{green}[SM]{lightgreen} You found {default}Armor + P228{lightgreen}.");
+					}
     			}				
 			}
 			else if (StrEqual(info, "no"))
@@ -535,7 +543,7 @@ public int tier5buycallback(Menu menu, MenuAction action, int param1, int param2
 			{
 				if (!IsPlayerAlive(param1) || GetClientTeam(param1) != 2)
 				{
-					CPrintToChat(param1, "[SM] You need to be alive and on T to use this command");
+					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
 				int oldcredits = Store_GetClientCredits(param1);
