@@ -4,7 +4,7 @@
 #define DEBUG
 
 #define PLUGIN_AUTHOR "log-ical"
-#define PLUGIN_VERSION "2.05"
+#define PLUGIN_VERSION "2.25"
 
 #include <colors>
 #include <sdktools>
@@ -90,7 +90,7 @@ public Action menu1(int client, int args)
 			}
 			if (!g_bTimer)
 			{
-				CPrintToChat(client, "{green}[SM] {lightgreen}You can not purchase 30 seconds after round start.");
+				CPrintToChat(client, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
 				return Plugin_Handled;
 			}
 			client_choice[client] = -1;
@@ -237,6 +237,11 @@ public int tier1buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
+				if (!g_bTimer) //second check, incase client opened menu prior to 45 second mark
+				{
+					CPrintToChat(param1, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
+					return 0;
+				}
 				g_aBought[param1] = true;
 				//deducts credits for tier
 				int oldcredits = Store_GetClientCredits(param1); 
@@ -318,6 +323,11 @@ public int tier2buycallback(Menu menu, MenuAction action, int param1, int param2
 				if (!IsPlayerAlive(param1) || GetClientTeam(param1) != 2)
 				{
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
+					return 0;
+				}
+				if (!g_bTimer)
+				{
+					CPrintToChat(param1, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
 					return 0;
 				}
 				g_aBought[param1] = true;
@@ -405,6 +415,11 @@ public int tier3buycallback(Menu menu, MenuAction action, int param1, int param2
 				if (!IsPlayerAlive(param1) || GetClientTeam(param1) != 2)
 				{
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
+					return 0;
+				}
+				if (!g_bTimer)
+				{
+					CPrintToChat(param1, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
 					return 0;
 				}
 				g_aBought[param1] = true;
@@ -495,6 +510,11 @@ public int tier4buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
+				if (!g_bTimer)
+				{
+					CPrintToChat(param1, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
+					return 0;
+				}
 				g_aBought[param1] = true;
 				int oldcredits = Store_GetClientCredits(param1);
 				int newcredits = oldcredits - 4000;
@@ -583,6 +603,11 @@ public int tier5buycallback(Menu menu, MenuAction action, int param1, int param2
 				if (!IsPlayerAlive(param1) || GetClientTeam(param1) != 2)
 				{
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
+					return 0;
+				}
+				if (!g_bTimer)
+				{
+					CPrintToChat(param1, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
 					return 0;
 				}
 				g_aBought[param1] = true;
