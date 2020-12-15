@@ -4,7 +4,7 @@
 #define DEBUG
 
 #define PLUGIN_AUTHOR "log-ical"
-#define PLUGIN_VERSION "1.25"
+#define PLUGIN_VERSION "2.00"
 
 #include <colors>
 #include <sdktools>
@@ -24,6 +24,8 @@ int client_choice[64];
 const int TIER_SIZE = 5;
 int tier_price[TIER_SIZE] =  { 1000, 2500, 3000, 4000, 5000 };
 
+bool g_aBought[MAXPLAYERS+1] = false; //boolean array to prevent players from buying crate >1 per round
+
 MenuHandler buy_callbacks[TIER_SIZE];
 
 typedef TIER_CALLBACK_FUNC = function Action (int client);
@@ -37,6 +39,31 @@ public void OnPluginStart()
  	buy_callbacks[2] = tier3buycallback; 
  	buy_callbacks[3] = tier4buycallback; 
  	buy_callbacks[4] = tier5buycallback;
+
+	HookEvent("round_start", Event_RoundStart, EventHookMode_Pre);
+}
+
+bool TimeCheck() //prevents crate buying after certain time
+{
+	int timeleft;
+	timeleft = GetMapTimeLeft(timeleft);
+	if(timeleft<375) //6min15sec, 45sec past round start
+	{
+		return false;
+	}
+	else
+	{
+		return true;
+	}
+}
+
+
+public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
+{
+	int size = sizeof(g_aBought); //This may *possibly* break something, dont think it will though. 
+	g_aBought[size] = false;
+	//resets bool array at start of round
+	return Plugin_Handled;
 }
 
 //checks if client issuing mcrate command is a member or not, this check is only so plugin can tell which menu to show
@@ -57,10 +84,20 @@ public Action menu1(int client, int args)
 	{
 		if (GetClientTeam(client) == 2)
 		{
+			if (g_aBought[client])
+			{
+				CPrintToChat(client, "{green}[SM] {lightgreen}You can only purchace one crate per round.");
+				return Plugin_Handled;
+			}
+			if (!TimeCheck())
+			{
+				CPrintToChat(client, "{green}[SM] {lightgreen}You can not purchase 30 seconds after round start.");
+				return Plugin_Handled;
+			}
 			client_choice[client] = -1;
 
 			Menu menu = new Menu(Menu_Callback);
-			menu.SetTitle("Cases");
+			menu.SetTitle("Crates");
 			menu.AddItem("t1", "Tier 1 (1000 Credits)");
 			menu.AddItem("t2", "Tier 2 (2500 Credits)");
 			menu.AddItem("t3", "Tier 3 (3000 Credits)");
@@ -201,6 +238,7 @@ public int tier1buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
+				g_aBought[param1] = true;
 				//deducts credits for tier
 				int oldcredits = Store_GetClientCredits(param1); 
 				int newcredits = oldcredits - 1000;
@@ -283,6 +321,7 @@ public int tier2buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
+				g_aBought[param1] = true;
 				int oldcredits = Store_GetClientCredits(param1);
 				int newcredits = oldcredits - 2500;
 				Store_SetClientCredits(param1, newcredits);
@@ -369,6 +408,7 @@ public int tier3buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
+				g_aBought[param1] = true;
 				int oldcredits = Store_GetClientCredits(param1);
 				int newcredits = oldcredits - 3000;
 				Store_SetClientCredits(param1, newcredits);
@@ -456,6 +496,7 @@ public int tier4buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
+				g_aBought[param1] = true;
 				int oldcredits = Store_GetClientCredits(param1);
 				int newcredits = oldcredits - 4000;
 				Store_SetClientCredits(param1, newcredits);
@@ -545,6 +586,7 @@ public int tier5buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
+				g_aBought[param1] = true;
 				int oldcredits = Store_GetClientCredits(param1);
 				int newcredits = oldcredits - 5000;
 				Store_SetClientCredits(param1, newcredits);
