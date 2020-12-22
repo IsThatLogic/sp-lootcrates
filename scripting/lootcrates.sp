@@ -1,5 +1,5 @@
 #pragma semicolon 1
-#pragma unused g_cvarChatTag
+// #pragma unused g_cvarChatTag
 
 #define DEBUG
 
@@ -28,6 +28,8 @@ bool g_aBought[MAXPLAYERS+1] = false; //boolean array to prevent players from bu
 
 bool g_bTimer = true;
 
+Handle g_tBuyPeriod;
+
 MenuHandler buy_callbacks[TIER_SIZE];
 
 typedef TIER_CALLBACK_FUNC = function Action (int client);
@@ -43,13 +45,14 @@ public void OnPluginStart()
  	buy_callbacks[4] = tier5buycallback;
 
 	HookEvent("round_start", Event_RoundStart, EventHookMode_Pre);
+	HookEvent("round_end", Event_RoundEnd);
 }
 
 
 public Action TimeCheck(Handle timer) //prevents crate buying after certain time
 {
 	g_bTimer = false;
-	CloseHandle(timer);
+	delete g_tBuyPeriod;
 }
 
 
@@ -61,8 +64,17 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
 	}
 	//resets bool array at start of round
 	g_bTimer = true;
-	CreateTimer(45.0, TimeCheck); //45 seconds after round, client cant buy crate
+	g_tBuyPeriod = CreateTimer(45.0, TimeCheck); //45 seconds after round, client cant buy crate
 	return Plugin_Handled;
+}
+
+public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
+{
+	if (g_bTimer)
+	{
+		g_bTimer = false;
+		delete g_tBuyPeriod;
+	}
 }
 
 //checks if client issuing mcrate command is a member or not, this check is only so plugin can tell which menu to show
