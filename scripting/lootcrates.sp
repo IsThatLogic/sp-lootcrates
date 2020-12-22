@@ -1,10 +1,13 @@
 #pragma semicolon 1
-// #pragma unused g_cvarChatTag
 
 #define DEBUG
 
+#define PLUGIN_NAME "Loot Crates"
 #define PLUGIN_AUTHOR "log-ical"
-#define PLUGIN_VERSION "2.25"
+#define PLUGIN_VERSION "2.4.0"
+#define PLUGIN_DESCRIPTION ""
+#define PLUIGN_URL ""
+
 
 #include <colors>
 #include <sdktools>
@@ -13,11 +16,11 @@
 
 public Plugin myinfo = 
 {
-	name = "Tiered Cases",
+	name = PLUGIN_NAME,
 	author = PLUGIN_AUTHOR,
-	description = "",
+	description = PLUGIN_DESCRIPTION,
 	version = PLUGIN_VERSION,
-	url = ""
+	url = PLUIGN_URL
 };
 
 int client_choice[64];
@@ -48,13 +51,11 @@ public void OnPluginStart()
 	HookEvent("round_end", Event_RoundEnd);
 }
 
-
 public Action TimeCheck(Handle timer) //prevents crate buying after certain time
 {
 	g_bTimer = false;
-	delete g_tBuyPeriod;
+	g_tBuyPeriod = null;
 }
-
 
 public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcast)
 {
