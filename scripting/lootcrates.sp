@@ -2,8 +2,11 @@
 
 #define DEBUG
 
+#define PLUGIN_NAME "Loot Crates"
 #define PLUGIN_AUTHOR "log-ical"
-#define PLUGIN_VERSION "2.4.0"
+#define PLUGIN_VERSION "2.4.5"
+#define PLUGIN_DESCRIPTION ""
+#define PLUGIN_URL ""
 
 #include <colors>
 #include <sdktools>
@@ -12,11 +15,11 @@
 
 public Plugin myinfo = 
 {
-	name = "Tiered Cases",
+	name = PLUGIN_NAME,
 	author = PLUGIN_AUTHOR,
-	description = "",
+	description = PLUGIN_DESCRIPTION,
 	version = PLUGIN_VERSION,
-	url = ""
+	url = PLUGIN_URL
 };
 
 int client_choice[64];
@@ -548,7 +551,7 @@ public int tier4buycallback(Menu menu, MenuAction action, int param1, int param2
    					{
 						GivePlayerItem(param1, "weapon_deagle");
 						GivePlayerAmmo(param1, 35, 8);
-						CPrintToChat(param1, "{green}[SM]{lightgreen} You found a{default}Deagle{lightgreen}.");
+						CPrintToChat(param1, "{green}[SM]{lightgreen} You found a {default}Deagle{lightgreen}.");
    						return 0;
    					}
    					case 4:
