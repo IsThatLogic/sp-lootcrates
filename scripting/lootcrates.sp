@@ -1,10 +1,9 @@
 #pragma semicolon 1
-// #pragma unused g_cvarChatTag
 
 #define DEBUG
 
 #define PLUGIN_AUTHOR "log-ical"
-#define PLUGIN_VERSION "2.25"
+#define PLUGIN_VERSION "2.4.0"
 
 #include <colors>
 #include <sdktools>
