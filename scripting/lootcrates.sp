@@ -26,9 +26,7 @@ int tier_price[TIER_SIZE] =  { 1000, 2500, 3000, 4000, 5000 };
 
 bool g_aBought[MAXPLAYERS+1] = false; //boolean array to prevent players from buying crate >1 per round
 
-bool g_bTimer = true;
-
-Handle g_tBuyPeriod;
+Handle g_hTimer;
 
 MenuHandler buy_callbacks[TIER_SIZE];
 
@@ -51,8 +49,7 @@ public void OnPluginStart()
 
 public Action TimeCheck(Handle timer) //prevents crate buying after certain time
 {
-	g_bTimer = false;
-	delete g_tBuyPeriod;
+	g_hTimer = null;
 }
 
 
@@ -63,18 +60,13 @@ public Action Event_RoundStart(Event event, const char[] name, bool dontBroadcas
 		g_aBought[i] = false;
 	}
 	//resets bool array at start of round
-	g_bTimer = true;
-	g_tBuyPeriod = CreateTimer(45.0, TimeCheck); //45 seconds after round, client cant buy crate
+	g_hTimer = CreateTimer(45.0, TimeCheck); //45 seconds after round, client cant buy crate
 	return Plugin_Handled;
 }
 
 public Action Event_RoundEnd(Event event, const char[] name, bool dontBroadcast)
 {
-	if (g_bTimer)
-	{
-		g_bTimer = false;
-		delete g_tBuyPeriod;
-	}
+	delete g_hTimer;
 }
 
 //checks if client issuing mcrate command is a member or not, this check is only so plugin can tell which menu to show
@@ -100,7 +92,7 @@ public Action menu1(int client, int args)
 				CPrintToChat(client, "{green}[SM] {lightgreen}You can only purchace one crate per round.");
 				return Plugin_Handled;
 			}
-			if (!g_bTimer)
+			if (g_hTimer == null)
 			{
 				CPrintToChat(client, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
 				return Plugin_Handled;
@@ -249,7 +241,7 @@ public int tier1buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
-				if (!g_bTimer) //second check, incase client opened menu prior to 45 second mark
+				if (g_hTimer == null) //second check, incase client opened menu prior to 45 second mark
 				{
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
 					return 0;
@@ -337,7 +329,7 @@ public int tier2buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
-				if (!g_bTimer)
+				if (g_hTimer == null)
 				{
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
 					return 0;
@@ -429,7 +421,7 @@ public int tier3buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
-				if (!g_bTimer)
+				if (g_hTimer == null)
 				{
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
 					return 0;
@@ -522,7 +514,7 @@ public int tier4buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
-				if (!g_bTimer)
+				if (g_hTimer == null)
 				{
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
 					return 0;
@@ -617,7 +609,7 @@ public int tier5buycallback(Menu menu, MenuAction action, int param1, int param2
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You need to be alive and on T to use this command");
 					return 0;
 				}
-				if (!g_bTimer)
+				if (g_hTimer == null)
 				{
 					CPrintToChat(param1, "{green}[SM] {lightgreen}You can not purchase 45 seconds after round start.");
 					return 0;
